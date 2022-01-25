@@ -1,5 +1,5 @@
 name: Aestus
-version: 1.0.0
+version: 1.1.0
 main: live.myoun.aestus.AestusPlugin
 api-version: 1.17
 
@@ -7,4 +7,4 @@ commands:
   break:
     description: break it
   cancel:
-    description: can break command (fifo)
+    description: canel break command

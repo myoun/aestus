@@ -1,6 +1,5 @@
 package live.myoun.aestus.mode
 
-import live.myoun.aestus.taskMap
 import live.myoun.aestus.taskQueue
 import org.bukkit.Bukkit
 import org.bukkit.Location
@@ -8,7 +7,14 @@ import org.bukkit.Material
 import org.bukkit.command.CommandSender
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.util.Vector
+import sun.net.www.protocol.http.HttpURLConnection
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.net.URL
 import java.util.*
+import kotlin.math.abs
+import kotlin.math.roundToInt
+
 
 class DoublePrinter(pos1: Vector, pos2: Vector, val sender: CommandSender, override val direction: Direction,
                     val plugin: JavaPlugin, override val material: Material? = null) : Mode {
@@ -16,7 +22,9 @@ class DoublePrinter(pos1: Vector, pos2: Vector, val sender: CommandSender, overr
     val high = if (pos1.y >= pos2.y) pos1.y else pos2.y
     val low = if (pos1.y <= pos2.y) pos1.y else pos2.y
 
-    val mp = Vector((pos1.x+pos2.x)/2, high, (pos1.z+pos2.z)/2)
+    val mp = Vector((pos1.x+pos2.x)/2, high, (pos1.z+pos2.z)/2).let {
+        Vector(it.x.roundToInt().toDouble(), it.y, it.z.roundToInt().toDouble())
+    }
     val fp = Vector(if (pos1.x <= pos2.x) pos1.x else pos2.x, mp.y, if (pos1.z <= pos2.z) pos1.z else pos2.z)
     val lp = Vector(if (pos1.x >= pos2.x) pos1.x else pos2.x, mp.y, if (pos1.z >= pos2.z) pos1.z else pos2.z)
 
@@ -48,13 +56,12 @@ class DoublePrinter(pos1: Vector, pos2: Vector, val sender: CommandSender, overr
 
         if (lx == mp.x && lz == mp.z && ly == low) {
             val taskId = taskQueue[sender]!!.poll()
-            Bukkit.getScheduler().cancelTask(taskId)
-            sender.sendMessage("Task Cancelled")
+            Bukkit.getScheduler().cancelAllTasks()
+            sender.sendMessage("§d파괴가 완료되었습니다.")
             rest = false
             return
         }
         changeLocation()
-
     }
 
     override fun changeLocation() {
@@ -89,6 +96,10 @@ class DoublePrinter(pos1: Vector, pos2: Vector, val sender: CommandSender, overr
     }
 
     override fun launch(tick: Long) {
+        if (abs(fp.z.toInt()-lp.z.toInt()) % 2 == 0 ) {
+            sender.sendMessage("§c더블 프린터를 사용할 수 없습니다.")
+            return
+        }
         taskQueue[sender].also {
             val taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, {
                 if (rest) {
@@ -97,10 +108,10 @@ class DoublePrinter(pos1: Vector, pos2: Vector, val sender: CommandSender, overr
             }, 0, tick)
             if (it == null) {
                 taskQueue[sender] = PriorityQueue<Int>(5).also { queue ->
-                    queue.add(taskId)
+                    queue.offer(taskId)
                 }
             } else {
-                it.add(taskId)
+                it.offer(taskId)
             }
         }
     }

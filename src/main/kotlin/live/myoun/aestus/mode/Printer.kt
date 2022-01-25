@@ -63,7 +63,7 @@ class Printer(pos1: Vector, pos2: Vector, val sender: CommandSender, override va
                         val taskId = taskQueue[sender]!!.poll()
                         Bukkit.getScheduler().cancelTask(taskId)
                         rest = false
-                        sender.sendMessage("Task Cancelled in Printer")
+                        sender.sendMessage("§d파괴가 완료되었습니다.")
                         return
                     }
                 } else {
@@ -73,7 +73,7 @@ class Printer(pos1: Vector, pos2: Vector, val sender: CommandSender, override va
                         val taskId = taskQueue[sender]!!.poll()
                         Bukkit.getScheduler().cancelTask(taskId)
                         rest = false
-                        sender.sendMessage("Task Cancelled in Printer")
+                        sender.sendMessage("§d파괴가 완료되었습니다.")
                         return
                     }
                 }
@@ -118,10 +118,10 @@ class Printer(pos1: Vector, pos2: Vector, val sender: CommandSender, override va
             }, 0, tick)
             if (it == null) {
                 taskQueue[sender] = PriorityQueue<Int>(5).also { queue ->
-                    queue.add(taskId)
+                    queue.offer(taskId)
                 }
             } else {
-                it.add(taskId)
+                it.offer(taskId)
             }
         }
     }

@@ -5,15 +5,20 @@ package live.myoun.aestus
 import live.myoun.aestus.mode.Direction
 import live.myoun.aestus.mode.DoublePrinter
 import live.myoun.aestus.mode.Printer
+import live.myoun.aestus.mode.Random
 import org.bukkit.Bukkit
 import org.bukkit.Material
+import org.bukkit.Server
+import org.bukkit.World
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.command.TabExecutor
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
 import org.bukkit.event.player.PlayerInteractEvent
+import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.util.Vector
 import java.util.*
@@ -21,8 +26,14 @@ import java.util.*
 class AestusPlugin : JavaPlugin() {
 
     override fun onEnable() {
+
         server.pluginManager.registerEvents(AestusListener(), this)
         getCommand("break").apply {
+            val executor = AestusCommand(this@AestusPlugin)
+            setExecutor(executor)
+            tabCompleter = executor
+        }
+        getCommand("cancel").apply {
             val executor = AestusCommand(this@AestusPlugin)
             setExecutor(executor)
             tabCompleter = executor
@@ -89,7 +100,7 @@ class AestusCommand(val plugin: JavaPlugin) : TabExecutor {
                         .toMutableList()
                 }
             }
-            2 -> mutableListOf("printer", "dprinter")
+            2 -> mutableListOf("printer", "dprinter", "random")
             else -> null
         }
     }
@@ -140,25 +151,22 @@ class AestusCommand(val plugin: JavaPlugin) : TabExecutor {
                         return false
                     }
                 }
+
                 when (args[1]) {
                     "printer" -> Printer(pos1, pos2, sender, direction, plugin, material = material).launch(tick)
                     "dprinter" -> DoublePrinter(pos1, pos2, sender, direction, plugin, material).launch(tick)
+                    "random" -> Random(pos1, pos2, sender, direction, plugin, material).launch(tick)
                 }
                 true
             }
             "cancel" -> {
-                val taskId = taskQueue[sender]
-                if (taskId == null) {
-                    sender.sendMessage("실행중인 Task가 없습니다.")
-                    false
-                } else {
-                    Bukkit.getScheduler().cancelTask(taskId.poll())
-                    true
-                }
+                Bukkit.getScheduler().cancelAllTasks()
+                true
             }
             else -> false
         }
     }
 }
+
 
 data class Pos(var first: Vector?, var second: Vector?)
