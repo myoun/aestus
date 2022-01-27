@@ -1,17 +1,11 @@
 package live.myoun.aestus.mode
 
-import live.myoun.aestus.taskQueue
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.command.CommandSender
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.util.Vector
-import sun.net.www.protocol.http.HttpURLConnection
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.net.URL
-import java.util.*
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -55,7 +49,6 @@ class DoublePrinter(pos1: Vector, pos2: Vector, val sender: CommandSender, overr
         }
 
         if (lx == mp.x && lz == mp.z && ly == low) {
-            val taskId = taskQueue[sender]!!.poll()
             Bukkit.getScheduler().cancelAllTasks()
             sender.sendMessage("§d파괴가 완료되었습니다.")
             rest = false
@@ -96,23 +89,12 @@ class DoublePrinter(pos1: Vector, pos2: Vector, val sender: CommandSender, overr
     }
 
     override fun launch(tick: Long) {
-        if (abs(fp.z.toInt()-lp.z.toInt()) % 2 == 0 ) {
+        if (abs(fp.z-lp.z).toInt() % 2 != 0) {
             sender.sendMessage("§c더블 프린터를 사용할 수 없습니다.")
             return
         }
-        taskQueue[sender].also {
-            val taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, {
-                if (rest) {
-                    breakBlock()
-                }
-            }, 0, tick)
-            if (it == null) {
-                taskQueue[sender] = PriorityQueue<Int>(5).also { queue ->
-                    queue.offer(taskId)
-                }
-            } else {
-                it.offer(taskId)
-            }
-        }
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, {
+            breakBlock()
+        }, 0, tick)
     }
 }

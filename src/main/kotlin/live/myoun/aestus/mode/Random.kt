@@ -1,12 +1,10 @@
 package live.myoun.aestus.mode
 
-import live.myoun.aestus.taskQueue
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.command.CommandSender
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.util.Vector
-import java.util.*
 
 class Random(pos1: Vector, pos2: Vector, val sender: CommandSender, override val direction: Direction,
              val plugin: JavaPlugin, override val material: Material? = null) : Mode {
@@ -42,7 +40,8 @@ class Random(pos1: Vector, pos2: Vector, val sender: CommandSender, override val
     }
 
     override fun breakBlock() {
-        val location = locations.random().toLocation(player.world)
+        if (locations.size == 0 ) Bukkit.getScheduler().cancelAllTasks()
+        val location = locations[0].toLocation(player.world)
         location.block.type = Material.AIR
         if (material != null) {
             if (material.isBlock) {
@@ -80,20 +79,9 @@ class Random(pos1: Vector, pos2: Vector, val sender: CommandSender, override val
                 vec.y
             } else it.sortedBy { vec -> vec.y }
         })
-        taskQueue[sender].also {
-            val taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, {
-                if (locations.isEmpty()) {
-                    Bukkit.getScheduler().cancelTask(it!!.poll())
-                }
-                breakBlock()
-            }, 0, tick)
-            if (it == null) {
-                taskQueue[sender] = PriorityQueue<Int>(5).also { queue ->
-                    queue.add(taskId)
-                }
-            } else {
-                it.offer(taskId)
-            }
-        }
+
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, {
+            breakBlock()
+        }, 0, tick)
     }
 }

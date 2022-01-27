@@ -1,6 +1,5 @@
 package live.myoun.aestus.mode
 
-import live.myoun.aestus.taskQueue
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Material
@@ -60,8 +59,7 @@ class Printer(pos1: Vector, pos2: Vector, val sender: CommandSender, override va
                     if (y < min.y) {
                         y++
                     } else {
-                        val taskId = taskQueue[sender]!!.poll()
-                        Bukkit.getScheduler().cancelTask(taskId)
+                        Bukkit.getScheduler().cancelAllTasks()
                         rest = false
                         sender.sendMessage("§d파괴가 완료되었습니다.")
                         return
@@ -70,8 +68,7 @@ class Printer(pos1: Vector, pos2: Vector, val sender: CommandSender, override va
                     if (y > max.y) {
                         y--
                     } else {
-                        val taskId = taskQueue[sender]!!.poll()
-                        Bukkit.getScheduler().cancelTask(taskId)
+                        Bukkit.getScheduler().cancelAllTasks()
                         rest = false
                         sender.sendMessage("§d파괴가 완료되었습니다.")
                         return
@@ -112,17 +109,8 @@ class Printer(pos1: Vector, pos2: Vector, val sender: CommandSender, override va
     }
 
     override fun launch(tick: Long) {
-        taskQueue[sender].also {
-            val taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, {
-                breakBlock()
-            }, 0, tick)
-            if (it == null) {
-                taskQueue[sender] = PriorityQueue<Int>(5).also { queue ->
-                    queue.offer(taskId)
-                }
-            } else {
-                it.offer(taskId)
-            }
-        }
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, {
+            breakBlock()
+        }, 0, tick)
     }
 }

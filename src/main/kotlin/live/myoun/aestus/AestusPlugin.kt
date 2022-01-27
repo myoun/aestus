@@ -47,6 +47,7 @@ class AestusListener : Listener {
 
     @EventHandler
     fun wand(event: PlayerInteractEvent) {
+        if (event.item == null) return
         if (event.item.type == Material.STICK) {
             if (!event.hasBlock()) return
             event.isCancelled = true
@@ -77,8 +78,6 @@ class AestusListener : Listener {
         }
     }
 }
-val taskMap = hashMapOf<CommandSender, Int>()
-val taskQueue = hashMapOf<CommandSender, PriorityQueue<Int>>()
 
 class AestusCommand(val plugin: JavaPlugin) : TabExecutor {
 
@@ -111,7 +110,6 @@ class AestusCommand(val plugin: JavaPlugin) : TabExecutor {
         label: String,
         args: Array<out String>
     ): Boolean {
-            println(args.size)
             val player = Bukkit.getPlayer(sender.name)
             return when (command.name) {
             "break" -> {
