@@ -16,7 +16,7 @@ class Printer(pos1: Vector, pos2: Vector, val sender: CommandSender, override va
     private var y: Double
     private var z: Double
     private var rest: Boolean = true
-    private val player = Bukkit.getPlayer(sender.name)
+    private val player = Bukkit.getPlayer(sender.name)!!
 
 
     init {
@@ -59,7 +59,7 @@ class Printer(pos1: Vector, pos2: Vector, val sender: CommandSender, override va
                     if (y < min.y) {
                         y++
                     } else {
-                        Bukkit.getScheduler().cancelAllTasks()
+                        Bukkit.getScheduler().cancelTasks(plugin)
                         rest = false
                         sender.sendMessage("§d파괴가 완료되었습니다.")
                         return
@@ -68,7 +68,7 @@ class Printer(pos1: Vector, pos2: Vector, val sender: CommandSender, override va
                     if (y > max.y) {
                         y--
                     } else {
-                        Bukkit.getScheduler().cancelAllTasks()
+                        Bukkit.getScheduler().cancelTasks(plugin)
                         rest = false
                         sender.sendMessage("§d파괴가 완료되었습니다.")
                         return

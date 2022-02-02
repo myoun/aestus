@@ -110,7 +110,7 @@ class AestusCommand(val plugin: JavaPlugin) : TabExecutor {
         label: String,
         args: Array<out String>
     ): Boolean {
-            val player = Bukkit.getPlayer(sender.name)
+            val player = Bukkit.getPlayer(sender.name)!!
             return when (command.name) {
             "break" -> {
                 val pos = posMap[player.uniqueId] ?: run {
@@ -158,7 +158,7 @@ class AestusCommand(val plugin: JavaPlugin) : TabExecutor {
                 true
             }
             "cancel" -> {
-                Bukkit.getScheduler().cancelAllTasks()
+                Bukkit.getScheduler().cancelTasks(plugin)
                 true
             }
             else -> false

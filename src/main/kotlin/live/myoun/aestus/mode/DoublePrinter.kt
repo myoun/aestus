@@ -30,7 +30,7 @@ class DoublePrinter(pos1: Vector, pos2: Vector, val sender: CommandSender, overr
     var ly = lp.y
     var lz = lp.z
 
-    val player = Bukkit.getPlayer(sender.name)
+    val player = Bukkit.getPlayer(sender.name)!!
     var rest: Boolean = true
 
     override fun breakBlock() {
@@ -49,7 +49,7 @@ class DoublePrinter(pos1: Vector, pos2: Vector, val sender: CommandSender, overr
         }
 
         if (lx == mp.x && lz == mp.z && ly == low) {
-            Bukkit.getScheduler().cancelAllTasks()
+            Bukkit.getScheduler().cancelTasks(plugin)
             sender.sendMessage("§d파괴가 완료되었습니다.")
             rest = false
             return

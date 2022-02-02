@@ -9,7 +9,7 @@ import org.bukkit.util.Vector
 class Random(pos1: Vector, pos2: Vector, val sender: CommandSender, override val direction: Direction,
              val plugin: JavaPlugin, override val material: Material? = null) : Mode {
 
-    private val player = Bukkit.getPlayer(sender.name)
+    private val player = Bukkit.getPlayer(sender.name)!!
 
     private val locations : MutableList<Vector> = mutableListOf()
     private val min: Vector = Vector()
@@ -40,7 +40,7 @@ class Random(pos1: Vector, pos2: Vector, val sender: CommandSender, override val
     }
 
     override fun breakBlock() {
-        if (locations.size == 0 ) Bukkit.getScheduler().cancelAllTasks()
+        if (locations.size == 0 ) Bukkit.getScheduler().cancelTasks(plugin)
         val location = locations[0].toLocation(player.world)
         location.block.type = Material.AIR
         if (material != null) {
