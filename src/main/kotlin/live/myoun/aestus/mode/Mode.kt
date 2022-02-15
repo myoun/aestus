@@ -1,7 +1,9 @@
 package live.myoun.aestus.mode
 
 import live.myoun.aestus.Direction
+import org.bukkit.Location
 import org.bukkit.Material
+import org.bukkit.block.Block
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.util.Vector
@@ -15,6 +17,22 @@ interface Mode {
 
     companion object {
         val tasks: HashMap<UUID, MutableList<Int>> = HashMap()
+        val blocks: HashMap<UUID, MutableList<List<Pair<Location, Material>>>> = HashMap()
+
+        /**
+         * UNDO를 위한 기록에 추가
+         */
+        fun addToHistory(vectors: List<Vector>, player: Player) {
+            if (blocks[player.uniqueId] == null) {
+                blocks[player.uniqueId] = mutableListOf()
+            }
+
+            blocks[player.uniqueId]!!.add(
+                vectors.map {
+                    it.toLocation(player.world) to it.toLocation(player.world).block.type
+                }
+            )
+        }
     }
 
     val pos1: Vector
@@ -25,7 +43,7 @@ interface Mode {
     val plugin: JavaPlugin
     val player: Player
 
-    fun launch()
+    fun launch(reversed: Boolean)
 
 }
 

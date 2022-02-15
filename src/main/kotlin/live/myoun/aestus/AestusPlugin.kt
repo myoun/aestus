@@ -21,6 +21,11 @@ class AestusPlugin : JavaPlugin() {
             setExecutor(executor)
             tabCompleter = executor
         }
+        getCommand("stop").apply {
+            val executor = AestusCommand(this@AestusPlugin)
+            setExecutor(executor)
+            tabCompleter = executor
+        }
     }
 }
 

@@ -16,13 +16,14 @@ class DoublePrinter(override val pos1: Vector, override val pos2: Vector, overri
     var taskId: Int? = null
         private set
 
-    override fun launch() {
+    override fun launch(reversed: Boolean) {
         val udVec = calculateEdge(pos1, pos2)
             .let { mapVector(it.first, it.second) }
-            .filter { it.toLocation(world).block.type != Material.AIR }
             .sortedByDescending { it.y }.toMutableList()
 
         val duVec = udVec.reversed().toMutableList()
+
+        Mode.addToHistory(udVec, player)
 
         taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, {
             if (udVec[0] == duVec[0] || udVec[1] == duVec[0]) {
@@ -30,12 +31,29 @@ class DoublePrinter(override val pos1: Vector, override val pos2: Vector, overri
                 val idx = Mode.tasks[player.uniqueId]!!.indexOf(taskId)
                 Mode.tasks[player.uniqueId]!!.removeAt(idx)
             }
+            val udb = udVec[0].toLocation(world).block
+            val dub = duVec[0].toLocation(world).block
 
-            udVec[0].toLocation(world).block.type = Material.AIR
-            udVec.removeFirst()
+            fun removeUdb() {
+                udb.type = Material.AIR
+                udVec.removeFirst()
+            }
+            fun removeDub() {
+                dub.type = Material.AIR
+                duVec.removeFirst()
+            }
 
-            duVec[0].toLocation(world).block.type = Material.AIR
-            duVec.removeFirst()
+            if (material == null) {
+                removeUdb()
+                removeDub()
+            } else if (reversed) {
+                if (udb.type != material) removeUdb()
+                if (dub.type != material) removeDub()
+            } else {
+                if (udb.type == material) removeUdb()
+                if (dub.type == material) removeDub()
+            }
+
         }, 0, tick)
 
         if (Mode.tasks[player.uniqueId] == null) {

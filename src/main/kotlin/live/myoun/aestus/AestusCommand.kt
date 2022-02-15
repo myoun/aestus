@@ -1,6 +1,7 @@
 package live.myoun.aestus
 
 import live.myoun.aestus.mode.DoublePrinter
+import live.myoun.aestus.mode.Mode
 import live.myoun.aestus.mode.Printer
 import live.myoun.aestus.mode.Random
 import org.bukkit.Bukkit
@@ -60,8 +61,14 @@ class AestusCommand(val plugin: JavaPlugin) : TabExecutor {
                     player.sendMessage("§dPos2가 지정되지 않았습니다.")
                     return false
                 }
+
+                var isReversed = false
+
                 val material: Material? = if (args[0] == "a") {
                     null
+                } else if (args[0].startsWith("-")) {
+                    isReversed = true
+                    Material.getMaterial(args[0].removePrefix("-minecraft:").uppercase())
                 } else {
                     Material.getMaterial(args[0].removePrefix("minecraft:").uppercase())
                 }
@@ -86,14 +93,32 @@ class AestusCommand(val plugin: JavaPlugin) : TabExecutor {
                 }
 
                 when (args[1]) {
-                    "printer" -> Printer(pos1, pos2, material, tick, direction, player, plugin)
-                    "dprinter" -> DoublePrinter(pos1, pos2, material, tick, direction, player, plugin)
-                    "random" -> Random(pos1, pos2, material, tick, direction, player, plugin)
+                    "printer" -> Printer(pos1, pos2, material, tick, direction, player, plugin).launch(isReversed)
+                    "dprinter" -> DoublePrinter(pos1, pos2, material, tick, direction, player, plugin).launch(isReversed)
+                    "random" -> Random(pos1, pos2, material, tick, direction, player, plugin).launch(isReversed)
                 }
                 true
             }
             "cancel" -> {
                 Bukkit.getScheduler().cancelTasks(plugin)
+                true
+            }
+            "stop" -> {
+                Mode.tasks[player.uniqueId]?.also {
+                    Bukkit.getScheduler().cancelTask(it[0])
+                }
+                true
+            }
+            "undo" -> {
+                val blocks = (Mode.blocks[player.uniqueId] ?: kotlin.run {
+                    player.sendMessage("§c기록이 없습니다.")
+                    return false
+                })[0]
+
+                blocks.forEach {
+                    it.first.block.type = it.second
+                }
+
                 true
             }
             else -> false

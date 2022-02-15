@@ -16,10 +16,15 @@ class Random(override val pos1: Vector, override val pos2: Vector, override val 
     var taskId: Int? = null
         private set
 
-    override fun launch() {
+    override fun launch(reversed: Boolean) {
         val vectors = calculateEdge(pos1, pos2)
             .let { mapVector(it.first, it.second) }
             .filter { it.toLocation(world).block.type != Material.AIR }
+            .filter {
+                if (material == null) true
+                else if (reversed) it.toLocation(world).block.type == material
+                else it.toLocation(world).block.type != material
+            }
             .shuffled()
             .run {
                 if (direction == Direction.DOWN)
@@ -27,6 +32,8 @@ class Random(override val pos1: Vector, override val pos2: Vector, override val 
                 else sortedBy { it.y }
             }
             .toMutableList()
+
+        Mode.addToHistory(vectors, player)
 
         taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, {
             vectors[0].toLocation(world).block.type = Material.AIR
