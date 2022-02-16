@@ -36,13 +36,13 @@ class Random(override val pos1: Vector, override val pos2: Vector, override val 
         Mode.addToHistory(vectors, player)
 
         taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, {
-            vectors[0].toLocation(world).block.type = Material.AIR
-            vectors.removeFirst()
             if (vectors.isEmpty()) {
                 Bukkit.getScheduler().cancelTask(taskId!!)
                 val idx = Mode.tasks[player.uniqueId]!!.indexOf(taskId)
                 Mode.tasks[player.uniqueId]!!.removeAt(idx)
             }
+            vectors[0].toLocation(world).block.type = Material.AIR
+            vectors.removeFirst()
         }, 0, tick)
 
         if (Mode.tasks[player.uniqueId] == null) {

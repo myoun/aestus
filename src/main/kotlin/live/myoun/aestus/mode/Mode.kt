@@ -61,7 +61,7 @@ internal fun calculateEdge(pos1: Vector, pos2: Vector) : Pair<Vector, Vector> {
         min.x = pos2.x
         max.x = pos1.x
     }
-    if (pos1.y > pos2.y) {
+    if (pos1.y < pos2.y) {
         min.y = pos1.y
         max.y = pos2.y
     } else {
@@ -82,8 +82,11 @@ internal fun calculateEdge(pos1: Vector, pos2: Vector) : Pair<Vector, Vector> {
  * 각 꼭짓점 사이의 모든 좌표 계산
  */
 internal fun mapVector(min: Vector, max: Vector) : List<Vector> = mutableListOf<Vector>().apply {
-    for (x in min.x.toInt()..max.x.toInt())
-        for (z in min.z.toInt()..max.z.toInt())
-            for (y in min.y.toInt()..max.y.toInt())
-                add(Vector(x,y,z))
+    for (x in min.x.toInt()..max.x.toInt()) {
+        for (z in min.z.toInt()..max.z.toInt()) {
+            for (y in min.y.toInt()..max.y.toInt()) {
+                add(Vector(x, y, z))
+            }
+        }
+    }
 }

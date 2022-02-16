@@ -103,7 +103,7 @@ class AestusCommand(val plugin: JavaPlugin) : TabExecutor {
                 Bukkit.getScheduler().cancelTasks(plugin)
                 true
             }
-            "stop" -> {
+            "st" -> {
                 Mode.tasks[player.uniqueId]?.also {
                     Bukkit.getScheduler().cancelTask(it[0])
                 }

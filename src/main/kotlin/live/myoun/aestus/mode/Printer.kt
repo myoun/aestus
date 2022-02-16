@@ -19,6 +19,7 @@ class Printer(override val pos1: Vector, override val pos2: Vector, override val
     override fun launch(reversed: Boolean) {
         val vectors = calculateEdge(pos1, pos2)
             .let { mapVector(it.first, it.second) }
+            .also { player.sendMessage(it.size.toString()) }
             .filter { it.toLocation(world).block.type != Material.AIR }
             .filter {
                 if (material == null) true
@@ -35,13 +36,14 @@ class Printer(override val pos1: Vector, override val pos2: Vector, override val
         Mode.addToHistory(vectors, player)
 
         taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, {
-            vectors[0].toLocation(world).block.type = Material.AIR
-            vectors.removeFirst()
             if (vectors.isEmpty()) {
-                Bukkit.getScheduler().cancelTask(taskId!!)
                 val idx = Mode.tasks[player.uniqueId]!!.indexOf(taskId)
                 Mode.tasks[player.uniqueId]!!.removeAt(idx)
+                Bukkit.getScheduler().cancelTask(taskId!!)
+                return@scheduleSyncRepeatingTask
             }
+            vectors[0].toLocation(world).block.type = Material.AIR
+            vectors.removeFirst()
         }, 0, tick)
 
         if (Mode.tasks[player.uniqueId] == null) {

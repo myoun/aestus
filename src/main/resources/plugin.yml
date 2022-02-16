@@ -8,5 +8,5 @@ commands:
     description: break it
   cancel:
     description: canel break command
-  stop:
+  st:
     description: stop specific task
