@@ -72,6 +72,7 @@ class AestusCommand(val plugin: JavaPlugin) : TabExecutor {
                 } else {
                     Material.getMaterial(args[0].removePrefix("minecraft:").uppercase())
                 }
+                player.sendMessage("$isReversed")
                 val tick = args[2].toLongOrNull() ?: kotlin.run {
                     sender.sendMessage("Invalid Tick")
                     return false

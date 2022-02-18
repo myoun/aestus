@@ -22,8 +22,8 @@ class Random(override val pos1: Vector, override val pos2: Vector, override val 
             .filter { it.toLocation(world).block.type != Material.AIR }
             .filter {
                 if (material == null) true
-                else if (reversed) it.toLocation(world).block.type == material
-                else it.toLocation(world).block.type != material
+                else if (reversed) it.toLocation(world).block.type != material
+                else it.toLocation(world).block.type == material
             }
             .shuffled()
             .run {
