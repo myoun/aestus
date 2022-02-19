@@ -10,3 +10,5 @@ commands:
     description: canel break command
   st:
     description: stop specific task
+  undo:
+    description: undo break

@@ -120,6 +120,8 @@ class AestusCommand(val plugin: JavaPlugin) : TabExecutor {
                     it.first.block.type = it.second
                 }
 
+                Mode.blocks[player.uniqueId]!!.removeFirst()
+
                 true
             }
             else -> false
