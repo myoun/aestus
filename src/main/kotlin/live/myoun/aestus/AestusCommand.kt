@@ -1,15 +1,13 @@
 package live.myoun.aestus
 
-import live.myoun.aestus.mode.DoublePrinter
-import live.myoun.aestus.mode.Mode
-import live.myoun.aestus.mode.Printer
-import live.myoun.aestus.mode.Random
+import live.myoun.aestus.mode.*
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.command.TabExecutor
 import org.bukkit.plugin.java.JavaPlugin
+import org.bukkit.util.Vector
 
 class AestusCommand(val plugin: JavaPlugin) : TabExecutor {
 
@@ -126,6 +124,45 @@ class AestusCommand(val plugin: JavaPlugin) : TabExecutor {
             }
             "cloner" -> {
 
+                // /cloner <pivot:x> <pivot:y> <pivot:z> <tick> <direction>
+
+                // pivot1 = pos1
+                // pivot2 = input from user (command)
+
+                val pos = posMap[player.uniqueId] ?: run {
+                    player.sendMessage("§dPos가 지정되지 않았습니다.")
+                    return false
+                }
+                val pos1 = pos.first ?: run {
+                    player.sendMessage("§dPos1이 지정되지 않았습니다.")
+                    return false
+                }
+                val pos2 = pos.second ?: run {
+                    player.sendMessage("§dPos2가 지정되지 않았습니다.")
+                    return false
+                }
+
+                val pivot2 = Vector().apply {
+                    x = args[0].toDouble()
+                    y = args[1].toDouble()
+                    z = args[2].toDouble()
+                }
+
+                val tick = args[3].toIntOrNull() ?: run {
+                    player.sendMessage("§ctick이 지정되지 않았습니다.")
+                    return false
+                }
+
+                val direction = when (args[4]) {
+                    "up" -> Direction.UP
+                    "down" -> Direction.DOWN
+                    else -> {
+                        sender.sendMessage("Invalid Direction")
+                        return false
+                    }
+                }
+
+                Cloner(pos1, pos2, pivot2, tick, direction, player, plugin) .launch()
 
                 true
             }
