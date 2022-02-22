@@ -6,12 +6,16 @@ import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
 import org.bukkit.event.player.PlayerInteractEvent
 
-class AestusListener : Listener {
+class AestusListener(val plugin: AestusPlugin) : Listener {
+
+    val wand: Material
+        get() = Material.getMaterial(plugin.config.getString("wand"))
+
 
     @EventHandler
     fun wand(event: PlayerInteractEvent) {
         if (event.item == null) return
-        if (event.item.type == Material.STICK) {
+        if (event.item.type == wand) {
             if (!event.hasBlock()) return
             event.isCancelled = true
             val location = event.clickedBlock.location

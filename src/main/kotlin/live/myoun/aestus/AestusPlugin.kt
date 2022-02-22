@@ -4,13 +4,22 @@ package live.myoun.aestus
 
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.util.Vector
+import java.io.File
 import java.util.*
 
 class AestusPlugin : JavaPlugin() {
 
-    override fun onEnable() {
+    val configFile = File(dataFolder, "config.yml")
 
-        server.pluginManager.registerEvents(AestusListener(), this)
+    override fun onEnable() {
+        if (!configFile.exists()) {
+            config.set("wand", "BLAZE_ROD")
+            config.save(configFile)
+        } else {
+            config.load(configFile)
+        }
+
+        server.pluginManager.registerEvents(AestusListener(this), this)
         getCommand("break").apply {
             val executor = AestusCommand(this@AestusPlugin)
             setExecutor(executor)
