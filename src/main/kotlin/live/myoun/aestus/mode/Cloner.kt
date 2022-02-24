@@ -12,6 +12,8 @@ class Cloner(val pos1: Vector, val pos2: Vector, val pivot2: Vector,
              val tick: Int, val direction: Direction, val player: Player,
              val plugin: JavaPlugin) {
 
+    var taskId: Int? = null
+        private set
 
     fun launch() {
         val world = player.world
@@ -34,9 +36,12 @@ class Cloner(val pos1: Vector, val pos2: Vector, val pivot2: Vector,
 
 //        TODO("scheduler")
 
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, {
+        taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, {
             if (vectors.isEmpty()) {
-                TODO("exit")
+                val idx = Mode.tasks[player.uniqueId]!!.indexOf(taskId)
+                Mode.tasks[player.uniqueId]!!.removeAt(idx)
+                Bukkit.getScheduler().cancelTask(taskId!!)
+                return@scheduleSyncRepeatingTask
             }
 
             val originloc = vectors.first().add(pos1)
@@ -44,6 +49,11 @@ class Cloner(val pos1: Vector, val pos2: Vector, val pivot2: Vector,
 
             plugin.server.dispatchCommand(player.server.consoleSender, "execute in minecraft:${world.name} run clone ${originloc.x} ${originloc.y} ${originloc.z} ${originloc.x} ${originloc.y} ${originloc.z} ${pivloc.x} ${pivloc.y} ${pivloc.z}")
 
+            if (Mode.tasks[player.uniqueId] == null) {
+                Mode.tasks[player.uniqueId] = mutableListOf()
+            }
+
+            Mode.tasks[player.uniqueId]!!.add(taskId!!)
         },0, tick.toLong())
     }
 }

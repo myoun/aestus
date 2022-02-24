@@ -3,7 +3,7 @@ plugins {
 }
 
 group = "live.myoun"
-version = "1.3.0"
+version = property("version")!!
 
 repositories {
     mavenCentral()
@@ -22,5 +22,10 @@ shade.extendsFrom(configurations.implementation.get())
 tasks {
     jar {
         from (shade.map { if (it.isDirectory) it else zipTree(it) })
+    }
+    processResources {
+        filesMatching("*.yml") {
+            expand(project.properties)
+        }
     }
 }

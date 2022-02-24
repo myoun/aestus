@@ -1,5 +1,5 @@
-name: Aestus
-version: 1.3.0
+name: $pluginName
+version: $version
 main: live.myoun.aestus.AestusPlugin
 api-version: 1.17
 
