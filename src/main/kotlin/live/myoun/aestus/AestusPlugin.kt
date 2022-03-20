@@ -2,6 +2,7 @@
 
 package live.myoun.aestus
 
+import org.bukkit.command.CommandSender
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.util.Vector
 import java.io.File
@@ -22,8 +23,14 @@ class AestusPlugin : JavaPlugin() {
 
 
     override fun onEnable() {
+        val msgReceivers = server.onlinePlayers
+            .map{ it as CommandSender }
+            .filter { it.isOp }
+            .toMutableList()
+            .apply{ add(server.consoleSender) }
+
         if (isAlphaBuild) {
-            server.onlinePlayers.filter { it.isOp }.forEach {
+            msgReceivers.forEach {
                 it.sendMessage(
                     "§c==================================================\n"+
                     "Aestus 플러그인의 Alpha 버전을 사용하고 계십니다.\n"+
@@ -33,7 +40,7 @@ class AestusPlugin : JavaPlugin() {
                 )
             }
         } else if (isBetaBuild) {
-            server.onlinePlayers.filter { it.isOp }.forEach {
+            msgReceivers.forEach {
                 it.sendMessage(
                     "§e==================================================\n"+
                     "Aestus 플러그인의 Beta 버전을 사용하고 계십니다.\n"+
@@ -68,6 +75,11 @@ class AestusPlugin : JavaPlugin() {
             tabCompleter = executor
         }
         getCommand("undo").apply {
+            val executor = AestusCommand(this@AestusPlugin)
+            setExecutor(executor)
+            tabCompleter = executor
+        }
+        getCommand("cloner").apply {
             val executor = AestusCommand(this@AestusPlugin)
             setExecutor(executor)
             tabCompleter = executor

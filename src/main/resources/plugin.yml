@@ -12,3 +12,5 @@ commands:
     description: stop specific task
   undo:
     description: undo break
+  cloner:
+    description: clone blocks

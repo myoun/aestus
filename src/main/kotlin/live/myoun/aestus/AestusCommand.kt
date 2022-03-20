@@ -6,6 +6,10 @@ import org.bukkit.Material
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.command.TabExecutor
+import org.bukkit.enchantments.Enchantment
+import org.bukkit.entity.Entity
+import org.bukkit.entity.LivingEntity
+import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.util.Vector
 
@@ -143,9 +147,9 @@ class AestusCommand(val plugin: JavaPlugin) : TabExecutor {
                 }
 
                 val pivot2 = Vector().apply {
-                    x = args[0].toDouble()
-                    y = args[1].toDouble()
-                    z = args[2].toDouble()
+                    x = args[0].checkRelativePos(player, Axis.X)
+                    y = args[1].checkRelativePos(player, Axis.Y)
+                    z = args[2].checkRelativePos(player, Axis.Z)
                 }
 
                 val tick = args[3].toIntOrNull() ?: run {
@@ -163,10 +167,24 @@ class AestusCommand(val plugin: JavaPlugin) : TabExecutor {
                 }
 
                 Cloner(pos1, pos2, pivot2, tick, direction, player, plugin) .launch()
-
                 true
             }
             else -> false
         }
     }
+}
+
+private fun String.checkRelativePos(player: Entity, axis: Axis) : Double {
+    return if (this == "~") {
+        when (axis) {
+            Axis.X -> player.location.blockX.toDouble()
+            Axis.Y -> player.location.blockY.toDouble()
+            Axis.Z -> player.location.blockZ.toDouble()
+        }
+    }
+    else this.toDouble()
+}
+
+enum class Axis {
+    X, Y, Z
 }
