@@ -1,7 +1,7 @@
 name: $pluginName
 version: $version
 main: live.myoun.aestus.AestusPlugin
-api-version: 1.17
+api-version: 1.18
 
 libraries:
   - org.jetbrains.kotlin:kotlin-stdlib:1.6.10
