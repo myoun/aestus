@@ -59,27 +59,27 @@ class AestusPlugin : JavaPlugin() {
         }
 
         server.pluginManager.registerEvents(AestusListener(this), this)
-        getCommand("break").apply {
+        getCommand("break")?.apply {
             val executor = AestusCommand(this@AestusPlugin)
             setExecutor(executor)
             tabCompleter = executor
         }
-        getCommand("cancel").apply {
+        getCommand("cancel")?.apply {
             val executor = AestusCommand(this@AestusPlugin)
             setExecutor(executor)
             tabCompleter = executor
         }
-        getCommand("st").apply {
+        getCommand("st")?.apply {
             val executor = AestusCommand(this@AestusPlugin)
             setExecutor(executor)
             tabCompleter = executor
         }
-        getCommand("undo").apply {
+        getCommand("undo")?.apply {
             val executor = AestusCommand(this@AestusPlugin)
             setExecutor(executor)
             tabCompleter = executor
         }
-        getCommand("cloner").apply {
+        getCommand("cloner")?.apply {
             val executor = AestusCommand(this@AestusPlugin)
             setExecutor(executor)
             tabCompleter = executor

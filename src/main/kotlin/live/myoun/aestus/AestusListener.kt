@@ -9,16 +9,16 @@ import org.bukkit.event.player.PlayerInteractEvent
 class AestusListener(val plugin: AestusPlugin) : Listener {
 
     val wand: Material
-        get() = Material.getMaterial(plugin.config.getString("wand"))
+        get() = Material.getMaterial(plugin.config.getString("wand")!!)!!
 
 
     @EventHandler
     fun wand(event: PlayerInteractEvent) {
         if (event.item == null) return
-        if (event.item.type == wand) {
+        if (event.item!!.type == wand) {
             if (!event.hasBlock()) return
             event.isCancelled = true
-            val location = event.clickedBlock.location
+            val location = event.clickedBlock!!.location
             when (event.action) {
                 Action.LEFT_CLICK_BLOCK -> { // Pos 1
                     if (posMap.containsKey(event.player.uniqueId)) {
@@ -26,7 +26,7 @@ class AestusListener(val plugin: AestusPlugin) : Listener {
                         pos.first = location.toVector()
                         posMap[event.player.uniqueId] = pos
                     } else {
-                        posMap[event.player.uniqueId] = Pos(event.clickedBlock.location.toVector(), null)
+                        posMap[event.player.uniqueId] = Pos(event.clickedBlock!!.location.toVector(), null)
                     }
                     event.player.sendMessage("§dPOS1이 ${location.x},${location.y},${location.z}로 지정되었습니다.")
                 }

@@ -13,16 +13,17 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib"))
-    compileOnly("com.destroystokyo.paper:paper-api:1.12.2-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT")
 }
 
-val shade = configurations.create("shade")
-shade.extendsFrom(configurations.implementation.get())
+// No Longer Needed
+//val shade = configurations.create("shade")
+//shade.extendsFrom(configurations.implementation.get())
 
 tasks {
-    jar {
-        from (shade.map { if (it.isDirectory) it else zipTree(it) })
-    }
+//    jar {
+//        from (shade.map { if (it.isDirectory) it else zipTree(it) })
+//    }
     processResources {
         filesMatching("*.yml") {
             expand(project.properties)
