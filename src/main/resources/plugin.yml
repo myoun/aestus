@@ -1,19 +1,19 @@
 name: $pluginName
 version: $version
 main: live.myoun.aestus.AestusPlugin
-api-version: 1.18
+api-version: $apiVersion
 
 libraries:
-  - org.jetbrains.kotlin:kotlin-stdlib:1.6.10
+  - org.jetbrains.kotlin:kotlin-stdlib:1.7.10
 
 commands:
   break:
-    description: break it
+    description: 선택된 범위 내 블럭들을 부숩니다.
   cancel:
-    description: canel break command
+    description: 블럭 파괴를 취소합니다.
   st:
-    description: stop specific task
+    description: 특정 작업을 멈춥니다.
   undo:
-    description: undo break
+    description: 블럭 파괴를 되돌립니다.
   cloner:
-    description: clone blocks
+    description: 선택된 범위 내 블럭들을 복사합니다.

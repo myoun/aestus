@@ -1,32 +1,30 @@
 plugins {
-    kotlin("jvm") version "1.6.10"
+    kotlin("jvm") version "1.7.10"
 }
 
-group = "live.myoun"
+group = "live.myoun.aestus"
 version = property("version")!!
 
 repositories {
     mavenCentral()
-    maven("https://papermc.io/repo/repository/maven-public/")
+    maven("https://repo.papermc.io/repository/maven-public/")
 }
 
 
 dependencies {
     implementation(kotlin("stdlib"))
-    compileOnly("io.papermc.paper:paper-api:1.18.2-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:${property("mcVersion")}-R0.1-SNAPSHOT")
 }
 
-// No Longer Needed
-//val shade = configurations.create("shade")
-//shade.extendsFrom(configurations.implementation.get())
-
 tasks {
-//    jar {
-//        from (shade.map { if (it.isDirectory) it else zipTree(it) })
-//    }
+
     processResources {
         filesMatching("*.yml") {
             expand(project.properties)
         }
     }
+}
+
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 }
